@@ -221,7 +221,7 @@
     <div class="row-posters">
       {% for t in trending %}
       <img src="https://image.tmdb.org/t/p/w500{{ t.poster_path }}" alt="{{ t.title }}" class="poster"
-        onclick="showDetails({{ t.id }})">
+        onclick="showDetails('{{ t.id }}')">
       {% endfor %}
     </div>
   </div>
@@ -232,7 +232,7 @@
     <div class="row-posters">
       {% for m in movies %}
       <img src="https://image.tmdb.org/t/p/w500{{ m.poster_path }}" alt="{{ m.title }}" class="poster"
-        onclick="showDetails({{ m.id }})">
+        onclick="showDetails('{{ m.id }}')">
       {% endfor %}
     </div>
   </div>
