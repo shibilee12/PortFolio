@@ -1,0 +1,8 @@
+Django>=5.0
+requests
+python-dotenv
+huggingface_hub
+transformers
+torch
+Pillow
+django-environ
