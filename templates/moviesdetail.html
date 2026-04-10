@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    {% if movie %}
+    <div class="row">
+        <div class="col-md-4">
+            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" class="img-fluid rounded">
+        </div>
+        <div class="col-md-8">
+            <h2>{{ movie.title }}</h2>
+            <p><b>Release:</b> {{ movie.release_date }}</p>
+            <p><b>Genres:</b> {% for g in movie.genres %}{{ g.name }} {% endfor %}</p>
+            <p>{{ movie.overview }}</p>
+            {% if movie.videos.results %}
+            <h5>Trailer:</h5>
+            <iframe width="100%" height="315" src="https://www.youtube.com/embed/{{ movie.videos.results.0.key }}" frameborder="0" allowfullscreen></iframe>
+            {% endif %}
+            <a href="{% url 'add_favorite' movie.id %}" class="btn btn-success mt-3">Add to Favorites</a>
+        </div>
+    </div>
+    {% else %}
+    <p>Movie not found.</p>
+    {% endif %}
+</div>
+{% endblock %}

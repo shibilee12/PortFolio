@@ -1,0 +1,399 @@
+{% extends 'base_elite.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Portfolio Specific Styles */
+    .hero-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 0 20px;
+    }
+
+    .hero-content {
+        text-align: center;
+        z-index: 2;
+    }
+
+    .hero-avatar-container {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 30px;
+        position: relative;
+        perspective: 1000px;
+    }
+
+    .hero-avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 4px solid var(--primary);
+        box-shadow: 0 0 50px var(--primary-glow);
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .hero-avatar:hover {
+        transform: rotateY(180deg);
+    }
+
+    .hero-badge {
+        background: rgba(108, 92, 231, 0.2);
+        color: var(--accent);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+        border: 1px solid rgba(108, 92, 231, 0.3);
+    }
+
+    .project-card {
+        height: 400px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 20px;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        cursor: pointer;
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .project-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .project-card:hover img {
+        transform: scale(1.1);
+    }
+
+    .project-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 30px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+
+    .project-card:hover .project-overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .tech-stack {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .tech-tag {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(4px);
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 60px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--accent);
+        margin-bottom: 5px;
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+    
+    .mini-projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+    
+    .mini-project-card {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: 0.3s;
+    }
+    
+    .mini-project-card:hover {
+        border-color: var(--primary);
+        background: rgba(108, 92, 231, 0.08);
+    }
+
+    .floating-shapes div {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--primary);
+        opacity: 0.1;
+        z-index: 1;
+        animation: floatShape 20s infinite linear;
+    }
+    
+    @keyframes floatShape {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(-100vh) rotate(360deg); }
+    }
+</style>
+
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+    <div class="floating-shapes">
+        <div style="width: 300px; height: 300px; left: 10%; bottom: -150px; animation-duration: 25s;"></div>
+        <div style="width: 200px; height: 200px; right: 15%; bottom: -100px; animation-duration: 30s; background: var(--accent);"></div>
+    </div>
+    
+    <div class="hero-content">
+        <div class="hero-avatar-container">
+            <img src="{% static 'avatar-portfolio.svg' %}" alt="Shibil Muhammed" class="hero-avatar">
+        </div>
+        
+        <div class="hero-badge animate-float">Full Stack Developer & Trading Systems Architect</div>
+        
+        <h1 class="text-gradient">Shibil Muhammed</h1>
+        <p style="max-width: 600px; margin: 0 auto 30px; color: var(--text-muted); font-size: 1.1rem;">
+            Engineering robust backend systems, intuitive front-end experiences, and smarter financial tools. 
+            Specializing in Python, Django, and Algorithmic Trading.
+        </p>
+        
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="#projects" class="btn-elite">
+                <span>View Projects</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+            <a href="https://github.com/shibilee12" target="_blank" class="btn-elite btn-outline">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </a>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" data-target="5">0</div>
+                <div class="stat-label">Years Experience</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-label">Projects Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="100">0</div>
+                <div class="stat-label">Code Commits</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" style="padding: 100px 20px;">
+    <div class="container">
+        <h2 class="text-center mb-5"><span class="text-gradient">Featured Work</span></h2>
+        
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+            <!-- Project 1: PyMusic -->
+            <div class="project-card glass-panel" onclick="window.location.href='/musixboard/'">
+                <img src="{% static 'Screenshot(234).png' %}" alt="PyMusic">
+                <div class="project-overlay">
+                    <h3>PyMusic</h3>
+                    <p style="color: #ddd; margin-bottom: 15px;">Modern music application with auto-generated playlists and live visualizations.</p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Django</span>
+                        <span class="tech-tag">Web Audio API</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 2: Trade Analyst -->
+            <div class="project-card glass-panel" onclick="alert('Demo coming soon!')">
+                <img src="{% static 'Screenshot (250).png' %}" alt="Trade Analyst">
+                <div class="project-overlay">
+                    <h3>Trade Analyst</h3>
+                    <p style="color: #ddd; margin-bottom: 15px;">Robust analytics dashboard for options trading with real-time signals.</p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Pandas</span>
+                        <span class="tech-tag">TA-Lib</span>
+                        <span class="tech-tag">WebSockets</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mini Projects Grid -->
+        <h3 style="margin-top: 80px; margin-bottom: 40px; text-align: center;">Mini App Collection</h3>
+        <div class="mini-projects-grid">
+            
+            <a href="/movies/" class="glass-panel mini-project-card">
+                <div style="font-size: 2rem; margin-bottom: 15px; color: #e50914;">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h4>MiniFlix</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; flex-grow: 1;">
+                    A Netflix-inspired streaming interface with vibrant visuals.
+                </p>
+                <div style="margin-top: 15px; color: var(--accent); font-size: 0.9rem; font-weight: 600;">
+                    Launch App <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                </div>
+            </a>
+            
+            <a href="/psychodoc/" class="glass-panel mini-project-card">
+                <div style="font-size: 2rem; margin-bottom: 15px; color: #ff9f43;">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4>PsychoDoc</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; flex-grow: 1;">
+                    AI-powered empathetic chat bot for emotional journaling.
+                </p>
+                <div style="margin-top: 15px; color: var(--accent); font-size: 0.9rem; font-weight: 600;">
+                    Launch App <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                </div>
+            </a>
+            
+            <a href="/weather/" class="glass-panel mini-project-card">
+                <div style="font-size: 2rem; margin-bottom: 15px; color: #00d2d3;">
+                    <i class="fas fa-cloud-sun-rain"></i>
+                </div>
+                <h4>Weather Book</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; flex-grow: 1;">
+                    Real-time weather visualization with forecast data.
+                </p>
+                <div style="margin-top: 15px; color: var(--accent); font-size: 0.9rem; font-weight: 600;">
+                    Launch App <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                </div>
+            </a>
+            
+            <a href="/musixboard/" class="glass-panel mini-project-card">
+                <div style="font-size: 2rem; margin-bottom: 15px; color: #5f27cd;">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h4>MusixBoard</h4>
+                <p style="color: var(--text-muted); font-size: 0.9rem; flex-grow: 1;">
+                    Interactive music player with sliding cover art.
+                </p>
+                <div style="margin-top: 15px; color: var(--accent); font-size: 0.9rem; font-weight: 600;">
+                    Launch App <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i>
+                </div>
+            </a>
+            
+        </div>
+    </div>
+</section>
+
+<!-- About & Contact Section -->
+<section id="about" style="padding: 100px 20px; background: linear-gradient(to bottom, var(--bg-dark), #0f0f1a);">
+    <div class="container">
+        <div class="glass-panel" style="padding: 60px; max-width: 900px; margin: 0 auto; text-align: center;">
+            <h2 class="mb-4">Beyond the Code</h2>
+            <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px;">
+                I believe in building software that doesn't just work, but feels great to use. My background involves deep-diving into
+                complex datasets for financial markets and translating that complexity into simple, actionable insights.
+            </p>
+            
+            <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+                <div class="p-3" style="background: rgba(255,255,255,0.03); border-radius: 12px;">
+                    <i class="fab fa-python fa-2x mb-3" style="color: #3776ab;"></i>
+                    <h5>Python</h5>
+                </div>
+                <div class="p-3" style="background: rgba(255,255,255,0.03); border-radius: 12px;">
+                    <i class="fab fa-js fa-2x mb-3" style="color: #f7df1e;"></i>
+                    <h5>JavaScript</h5>
+                </div>
+                <div class="p-3" style="background: rgba(255,255,255,0.03); border-radius: 12px;">
+                    <i class="fas fa-database fa-2x mb-3" style="color: #00cec9;"></i>
+                    <h5>Data</h5>
+                </div>
+                <div class="p-3" style="background: rgba(255,255,255,0.03); border-radius: 12px;">
+                    <i class="fas fa-chart-line fa-2x mb-3" style="color: #e84393;"></i>
+                    <h5>Trading</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" style="padding: 100px 20px; text-align: center;">
+    <h2 class="mb-5">Let's Connect</h2>
+    <div class="container" style="max-width: 600px;">
+        <div class="glass-panel" style="padding: 40px;">
+            <p style="margin-bottom: 30px; color: var(--text-muted);">
+                Open for collaborations and opportunities.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <a href="mailto:shibilim16@gmail.com" class="btn-elite">
+                    <i class="fas fa-envelope"></i> Email Me
+                </a>
+                <a href="https://www.linkedin.com/in/shbleemuhammed" target="_blank" class="btn-elite btn-outline">
+                    <i class="fab fa-linkedin"></i> LinkedIn
+                </a>
+                <a href="https://wa.me/919747081719" target="_blank" class="btn-elite btn-outline">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+            </div>
+        </div>
+        <footer style="margin-top: 60px; color: var(--text-muted); font-size: 0.8rem;">
+            &copy; 2025 Shibil Muhammed. Created with Django & GSAP.
+        </footer>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Stats Counter Animation
+    gsap.utils.toArray('.stat-number').forEach(stat => {
+        const target = stat.getAttribute('data-target');
+        gsap.to(stat, {
+            innerHTML: target,
+            duration: 2,
+            scrollTrigger: {
+                trigger: stat,
+                start: "top 80%"
+            },
+            snap: { innerHTML: 1 }
+        });
+    });
+
+    // Hero Element Entrance
+    gsap.from(".hero-content > *", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 0.5
+    });
+</script>
+{% endblock %}

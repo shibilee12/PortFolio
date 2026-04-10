@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login - PsychoDoc</title>
+    <style>
+        /* Your CSS for premium dark login UI */
+        body {
+            background: #0d1117;
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background: rgba(21, 27, 37, 0.85);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(21, 27, 37, 0.8);
+            width: 320px;
+        }
+        h1 {
+            color: #39a2db;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 0 8px #39a2db;
+        }
+        label {
+            display: block;
+            margin-top: 1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            color: #58a6ffcc;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.5rem;
+            margin-top: 0.25rem;
+            border-radius: 6px;
+            border: 1.5px solid #30363d;
+            background: #161b22;
+            color: #c9d1d9;
+            font-size: 1rem;
+        }
+        input[type="submit"] {
+            margin-top: 1.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: #39a2db;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            color: #0d1117;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #39a2db88;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
+            background: #58c0ff;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <h1>Login</h1>
+        {% if form.errors %}
+            <p style="color: #f87171;">Invalid username or password.</p>
+        {% endif %}
+        <label for="id_username">Username</label>
+        <input type="text" name="username" autofocus required id="id_username" />
+        <label for="id_password">Password</label>
+        <input type="password" name="password" required id="id_password" />
+        <input type="submit" value="Sign In" />
+    </form>
+    <p style="text-align:center; margin-top:1rem; color: #58a6ffcc;">
+    Don't have an account? <a href="{% url 'psychodoc_signup' %}" style="color:#39a2db;">Sign up</a>
+</p>
+
+</body>
+</html>

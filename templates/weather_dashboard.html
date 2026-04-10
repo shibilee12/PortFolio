@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body {
+    background-size: cover;
+    background-position: center;
+    transition: background-image 1s ease-in-out;
+    color: white;
+    min-height: 100vh;
+}
+.overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.4); z-index:-1;
+}
+.card {
+    border-radius:15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    color:white;
+    margin-bottom:15px;
+}
+.weather-icon{width:100px;}
+.snow,.rain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.snow span,.rain span{position:absolute;display:block;opacity:0.8;animation:fall linear infinite;}
+.snow span{background:white;border-radius:50%;width:6px;height:6px;animation-duration:10s;}
+.rain span{width:2px;height:15px;background:#aeeaff;animation-duration:2s;}
+@keyframes fall{0%{transform:translateY(-10vh);}100%{transform:translateY(100vh);}}
+</style>
+</head>
+
+<body id="weatherBody"
+      {% if weather_data and weather_data.image %}
+      style="background-image: url('{{ weather_data.image }}');"
+      {% endif %}
+>
+<div class="overlay"></div>
+
+<div class="container text-center py-4">
+    <h2 class="mb-4">🌤 Weather Dashboard</h2>
+    <form method="get" class="mb-4 d-flex justify-content-center">
+        <input type="text" name="city" placeholder="Enter city name" class="form-control w-50 me-2" required>
+        <button type="submit" class="btn btn-light fw-bold">Search</button>
+    </form>
+
+    {% if weather_data %}
+    <div class="card mx-auto p-4 w-50">
+        <h3>{{ weather_data.city }}</h3>
+        <img class="weather-icon" src="https://openweathermap.org/img/wn/{{ weather_data.icon }}@2x.png">
+        <h4>{{ weather_data.temperature }}°C</h4>
+        <p class="text-capitalize">{{ weather_data.description }}</p>
+    </div>
+
+    <!-- Forecast Section -->
+    {% if forecast and forecast.daily %}
+    <h4 class="mt-5 mb-3 text-white fw-bold">5-Day Forecast</h4>
+    <div class="d-flex flex-wrap justify-content-center">
+        {% for day in forecast.daily %}
+        <div class="card p-3 m-2 text-center" style="width:140px; background:rgba(255,255,255,0.85); color:#333;">
+            <p class="fw-semibold">{{ day.date|date:"D, d M" }}</p>
+            <img src="https://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="icon" class="mx-auto">
+            <p>{{ day.desc|title }}</p>
+            <p><b>{{ day.temp }}°C</b></p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Hourly Chart -->
+    {% if forecast and forecast.hourly %}
+    <canvas id="hourlyChart" class="my-4 mx-auto" style="max-width:600px;"></canvas>
+    {% endif %}
+    {% endif %}
+
+    <hr class="my-4">
+    <h5 class="text-white">Recent Searches</h5>
+    <div class="d-flex justify-content-center flex-wrap">
+       {% for item in history %}
+    <div class="m-2 p-2 border rounded bg-light text-dark" style="min-width:120px;">
+        <b>{{ item.city_name }}</b><br>{{ item.temperature }}°C
+    </div>
+{% empty %}
+    <p>No searches yet.</p>
+{% endfor %}
+
+    </div>
+</div>
+
+{% if weather_data %}
+<script>
+// --- Snow / Rain Animation ---
+const desc = "{{ weather_data.description|lower }}";
+function createParticles(type,count){
+    const container=document.createElement('div');
+    container.className=type;
+    for(let i=0;i<count;i++){
+        const span=document.createElement('span');
+        span.style.left=Math.random()*100+'vw';
+        span.style.animationDelay=Math.random()*5+'s';
+        container.appendChild(span);
+    }
+    document.body.appendChild(container);
+}
+if(desc.includes("snow")) createParticles('snow',80);
+else if(desc.includes("rain")) createParticles('rain',60);
+
+// --- Hourly Temp Chart ---
+{% if forecast and forecast.hourly %}
+const ctx=document.getElementById('hourlyChart').getContext('2d');
+const labels=[{% for h in forecast.hourly %}"{{ h.dt|date:'H:i' }}",{% endfor %}];
+const temps=[{% for h in forecast.hourly %}{{ h.temp }},{% endfor %}];
+new Chart(ctx,{
+    type:'line',
+    data:{
+        labels:labels,
+        datasets:[{
+            label:'Temperature °C',
+            data:temps,
+            borderColor:'white',
+            backgroundColor:'rgba(255,255,255,0.2)',
+            fill:true,
+            tension:0.3
+        }]
+    },
+    options:{
+        scales:{
+            y:{beginAtZero:false,ticks:{color:'white'}},
+            x:{ticks:{color:'white'}}
+        },
+        plugins:{legend:{labels:{color:'white'}}}
+    }
+});
+{% endif %}
+</script>
+{% endif %}
+</body>
+</html>

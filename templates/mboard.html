@@ -1,0 +1,372 @@
+{% extends 'base_elite.html' %}
+{% load static %}
+{% block title %}MusixBoard | Vinyl Experience{% endblock %}
+
+{% block content %}
+<style>
+  body {
+    background: radial-gradient(circle at center, #2c3e50, #000);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .player-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .glass-player {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 40px;
+    width: 900px;
+    height: 500px;
+    display: flex;
+    gap: 50px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    position: relative;
+  }
+
+  /* Vinyl Section */
+  .vinyl-wrapper {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vinyl-record {
+    width: 380px;
+    height: 380px;
+    background: url('https://png.pngtree.com/png-vector/20220611/ourmid/pngtree-vinyl-record-png-image_4964648.png') center/cover;
+    border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    animation: spin 4s linear infinite;
+    animation-play-state: paused;
+    position: relative;
+    z-index: 2;
+  }
+
+  .album-art {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    z-index: 3;
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .active-spin {
+    animation-play-state: running;
+  }
+
+  /* Controls Section */
+  .controls-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .track-info {
+    margin-bottom: 40px;
+  }
+
+  .track-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #fff, #a29bfe);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .track-artist {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .control-btns {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+
+  .btn-control {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn-control:hover {
+    color: var(--primary);
+    transform: scale(1.1);
+  }
+
+  .btn-play-lg {
+    width: 70px;
+    height: 70px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(108, 92, 231, 0.4);
+  }
+
+  .btn-play-lg:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(108, 92, 231, 0.6);
+  }
+
+  /* Progress Bar */
+  .progress-area {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: var(--primary);
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -4px;
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    transition: 0.2s;
+  }
+
+  .progress-area:hover .progress-bar::after {
+    opacity: 1;
+  }
+
+  /* Playlist */
+  .playlist {
+    margin-top: 30px;
+    height: 120px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .playlist-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .playlist-item:hover,
+  .playlist-item.active {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .playlist-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+  }
+</style>
+
+<div class="player-container">
+  <div class="glass-player">
+    <!-- Vinyl Wrapper -->
+    <div class="vinyl-wrapper">
+      <div class="vinyl-record" id="vinyl">
+        <img src="/static/random4.jpg" class="album-art" id="albumArt">
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-section">
+      <div class="track-info">
+        <h1 class="track-title" id="title">Easy On Me</h1>
+        <p class="track-artist" id="artist">Adele</p>
+      </div>
+
+      <div class="control-btns">
+        <button class="btn-control" id="prev"><i class="fas fa-backward"></i></button>
+        <button class="btn-control btn-play-lg" id="play">
+          <i class="fas fa-play"></i>
+        </button>
+        <button class="btn-control" id="next"><i class="fas fa-forward"></i></button>
+      </div>
+
+      <div class="progress-area" id="progressArea">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <audio id="audio" src="/static/easyonme.mp3"></audio>
+
+      <!-- Playlist -->
+      <div class="playlist">
+        <!-- Items injected by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const songs = [
+    {
+      title: "Easy on me",
+      artist: "Adele",
+      src: "/static/easyonme.mp3",
+      cover: "/static/random4.jpg",
+    },
+    {
+      title: "Delicate",
+      artist: "Taylor Swift",
+      src: "/static/delicate.mp3",
+      cover: "/static/random1.jpg",
+    },
+    {
+      title: "One Dance",
+      artist: "Clarx & Harddope",
+      src: "/static/onedance.mp3",
+      cover: "/static/random2.jpg",
+    },
+    {
+      title: "Pawn it all",
+      artist: "Miley Cyrus",
+      src: "/static/pawnitall.mp3",
+      cover: "/static/mileycyrus.png",
+    },
+    {
+      title: "Symphony",
+      artist: "Clean Bandit ft. Zara Larsson",
+      src: "/static/symphony.mp3",
+      cover: "/static/random5.jpg",
+    },
+    {
+      title: "Lose Control",
+      artist: "Meduza, Becky Hill, Goodboys",
+      src: "/static/losecontrol.mp3",
+      cover: "/static/random6.jpg",
+    }
+  ];
+
+  let currentIdx = 0;
+  const audio = document.getElementById('audio');
+  const playBtn = document.getElementById('play');
+  const vinyl = document.getElementById('vinyl');
+  const title = document.getElementById('title');
+  const artist = document.getElementById('artist');
+  const albumArt = document.getElementById('albumArt');
+  const progressBar = document.getElementById('progressBar');
+  const progressArea = document.getElementById('progressArea');
+  const playlistContainer = document.querySelector('.playlist');
+
+  // Create Playlist UI
+  function renderPlaylist() {
+    playlistContainer.innerHTML = '';
+    songs.forEach((s, i) => {
+      const di = document.createElement('div');
+      di.className = `playlist-item ${i === currentIdx ? 'active' : ''}`;
+      di.innerHTML = `
+                <img src="${s.cover}">
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem;">${s.title}</div>
+                    <div style="font-size:0.8rem; color: #aaa;">${s.artist}</div>
+                </div>
+            `;
+      di.onclick = () => loadSong(i);
+      playlistContainer.appendChild(di);
+    });
+  }
+
+  function loadSong(idx) {
+    currentIdx = idx;
+    const s = songs[idx];
+    title.innerText = s.title;
+    artist.innerText = s.artist;
+    albumArt.src = s.cover;
+    audio.src = s.src;
+    playSong();
+    renderPlaylist();
+  }
+
+  function playSong() {
+    audio.play();
+    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    vinyl.classList.add('active-spin');
+  }
+
+  function pauseSong() {
+    audio.pause();
+    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+    vinyl.classList.remove('active-spin');
+  }
+
+  playBtn.onclick = () => {
+    if (audio.paused) playSong();
+    else pauseSong();
+  };
+
+  document.getElementById('next').onclick = () => {
+    currentIdx = (currentIdx + 1) % songs.length;
+    loadSong(currentIdx);
+  };
+
+  document.getElementById('prev').onclick = () => {
+    currentIdx = (currentIdx - 1 + songs.length) % songs.length;
+    loadSong(currentIdx);
+  };
+
+  audio.ontimeupdate = (e) => {
+    const { duration, currentTime } = e.srcElement;
+    const percent = (currentTime / duration) * 100;
+    progressBar.style.width = `${percent}%`;
+  };
+
+  progressArea.onclick = (e) => {
+    const width = progressArea.clientWidth;
+    const clickX = e.offsetX;
+    const duration = audio.duration;
+    audio.currentTime = (clickX / width) * duration;
+  };
+
+  // Init
+  loadSong(0);
+  pauseSong(); // Don't autoplay on load
+  renderPlaylist();
+</script>
+{% endblock %}

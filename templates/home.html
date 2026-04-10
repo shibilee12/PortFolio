@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-dark text-light" style="min-height: 100vh; font-family: 'Poppins', sans-serif;">
+
+  <!-- Hero Section -->
+  <section class="position-relative text-center" style="height: 85vh;">
+    <img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?auto=format&fit=crop&w=1920&q=80" 
+         class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" alt="Hero">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-75"></div>
+    <div class="position-relative z-10 d-flex flex-column justify-content-center align-items-center h-100">
+      <h1 class="display-3 fw-bold text-danger mb-3 animate__animated animate__fadeInDown">MiniFlix</h1>
+      <p class="lead mb-4 text-light">Your personal streaming universe 🎥</p>
+      <a href="{% url 'home' %}" class="btn btn-danger btn-lg px-4 py-2">Start Watching</a>
+    </div>
+  </section>
+
+  <!-- Quick Categories -->
+  <section class="container py-5">
+    <h3 class="mb-4 text-center">Explore Categories</h3>
+    <div class="row text-center">
+      <div class="col-md-3 mb-4">
+        <div class="p-4 bg-secondary bg-opacity-25 rounded hover-scale">
+          <h5>🔥 Trending</h5>
+          <p class="small">See what’s popular this week</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="p-4 bg-secondary bg-opacity-25 rounded hover-scale">
+          <h5>🎬 Latest Movies</h5>
+          <p class="small">Fresh releases and hot picks</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="p-4 bg-secondary bg-opacity-25 rounded hover-scale">
+          <h5>⭐ Top Rated</h5>
+          <p class="small">Critically acclaimed titles</p>
+        </div>
+      </div>
+      <div class="col-md-3 mb-4">
+        <div class="p-4 bg-secondary bg-opacity-25 rounded hover-scale">
+          <h5>🎭 Genres</h5>
+          <p class="small">Action, Comedy, Drama & more</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+.hover-scale {
+  transition: all 0.3s ease;
+}
+.hover-scale:hover {
+  transform: scale(1.05);
+  background-color: rgba(255,255,255,0.05);
+}
+.object-fit-cover {
+  object-fit: cover;
+}
+</style>
+{% endblock %}

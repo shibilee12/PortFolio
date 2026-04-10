@@ -1,0 +1,301 @@
+{% extends 'base_elite.html' %}
+{% load static %}
+{% block title %}MiniFlix | Cinematic Experience{% endblock %}
+
+{% block content %}
+<style>
+  /* MiniFlix Specific Overrides */
+  body {
+    background-color: #000;
+  }
+
+  .netflix-nav {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+    padding: 20px 40px;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand-logo {
+    color: #e50914;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: -1px;
+  }
+
+  .hero-movie {
+    height: 85vh;
+    position: relative;
+    background: url('https://image.tmdb.org/t/p/original/uDgy6hyPd82kOHh6I95FLtLnj6p.jpg') center/cover no-repeat;
+  }
+
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #000 0%, transparent 60%);
+  }
+
+  .hero-gradient-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 15rem;
+    background: linear-gradient(180deg, transparent, #000);
+  }
+
+  .movie-info {
+    position: absolute;
+    top: 35%;
+    left: 5%;
+    max-width: 600px;
+    z-index: 10;
+  }
+
+  .movie-title {
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+  }
+
+  .movie-desc {
+    color: #ddd;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 30px;
+  }
+
+  .btn-play {
+    background: #fff;
+    color: #000;
+    padding: 12px 30px;
+    font-weight: 700;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+    border: none;
+    font-size: 1.1rem;
+  }
+
+  .btn-play:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .btn-more {
+    background: rgba(109, 109, 110, 0.7);
+    color: #fff;
+    padding: 12px 30px;
+    font-weight: 700;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: 0.2s;
+    border: none;
+    font-size: 1.1rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .btn-more:hover {
+    background: rgba(109, 109, 110, 0.4);
+  }
+
+  /* Rows */
+  .movie-row {
+    padding: 20px 0 20px 40px;
+    overflow: hidden;
+  }
+
+  .row-title {
+    color: #e5e5e5;
+    font-weight: 600;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+  }
+
+  .row-posters {
+    display: flex;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    padding: 20px 0;
+    gap: 15px;
+  }
+
+  .row-posters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .poster {
+    width: 160px;
+    border-radius: 4px;
+    transition: transform 450ms;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .poster:hover {
+    transform: scale(1.18);
+    z-index: 10;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  }
+
+  .search-input {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 0;
+  }
+
+  /* Modal */
+  .movie-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-content {
+    background: #141414;
+    max-width: 800px;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 20;
+  }
+</style>
+
+<nav class="netflix-nav">
+  <div class="brand-logo">MiniFlix</div>
+  <form method="get" style="display: flex;">
+    <input type="text" name="q" class="search-input" placeholder="Titles, people, genres">
+  </form>
+</nav>
+
+<!-- Hero (Featured Movie) -->
+<header class="hero-movie">
+  <div class="hero-gradient"></div>
+  <div class="movie-info">
+    <h1 class="movie-title">The Last of Us</h1>
+    <p class="movie-desc">
+      After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl who may be
+      humanity's last hope.
+    </p>
+    <div style="display: flex; gap: 15px;">
+      <button class="btn-play"><i class="fas fa-play"></i> Play</button>
+      <button class="btn-more"><i class="fas fa-info-circle"></i> More Info</button>
+    </div>
+  </div>
+  <div class="hero-gradient-bottom"></div>
+</header>
+
+<div style="margin-top: -100px; position: relative; z-index: 10; padding-bottom: 50px;">
+
+  <!-- Trending Row -->
+  <div class="movie-row">
+    <h2 class="row-title">Trending Now</h2>
+    <div class="row-posters">
+      {% for t in trending %}
+      <img src="https://image.tmdb.org/t/p/w500{{ t.poster_path }}" alt="{{ t.title }}" class="poster"
+        onclick="showDetails({{ t.id }})">
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Popular Row -->
+  <div class="movie-row">
+    <h2 class="row-title">Popular on MiniFlix</h2>
+    <div class="row-posters">
+      {% for m in movies %}
+      <img src="https://image.tmdb.org/t/p/w500{{ m.poster_path }}" alt="{{ m.title }}" class="poster"
+        onclick="showDetails({{ m.id }})">
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Details Modal -->
+<div id="movieModal" class="movie-modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <div style="display: flex; height: 500px;">
+      <div style="flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center;">
+        <h2 id="modalTitle" style="font-size: 2.5rem; margin-bottom: 10px;">Title</h2>
+        <div style="color: #46d369; font-weight: bold; margin-bottom: 20px;">98% Match</div>
+        <p id="modalDesc" style="color: #ddd; line-height: 1.6;">Description...</p>
+        <div style="margin-top: 30px;">
+          <a id="modalYoutube" href="#" target="_blank" class="btn-play"
+            style="text-decoration: none; width: fit-content;">
+            <i class="fab fa-youtube"></i> Watch Trailer
+          </a>
+        </div>
+      </div>
+      <div style="flex: 1; position: relative;">
+        <div class="hero-gradient" style="background: linear-gradient(to right, #141414, transparent);"></div>
+        <img id="modalImg" src="" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showDetails(id) {
+    // Fetch details from existing endpoint
+    fetch(`/movies/details/${id}/`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('modalTitle').innerText = data.title;
+        document.getElementById('modalDesc').innerText = data.overview;
+        document.getElementById('modalImg').src = data.poster;
+
+        const ytBtn = document.getElementById('modalYoutube');
+        if (data.trailer_key) {
+          ytBtn.href = `https://www.youtube.com/watch?v=${data.trailer_key}`;
+          ytBtn.style.display = 'inline-flex';
+        } else {
+          ytBtn.style.display = 'none';
+        }
+
+        document.getElementById('movieModal').style.display = 'flex';
+        gsap.from(".modal-content", { scale: 0.8, opacity: 0, duration: 0.3 });
+      })
+      .catch(err => console.error(err));
+  }
+
+  function closeModal() {
+    document.getElementById('movieModal').style.display = 'none';
+
+  }
+
+  // Close modal on click outside
+  window.onclick = function (event) {
+    if (event.target == document.getElementById('movieModal')) {
+      closeModal();
+    }
+  }
+</script>
+{% endblock %}

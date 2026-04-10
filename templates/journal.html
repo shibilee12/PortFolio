@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PsychoDoc Journal</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* === GENERAL PAGE STYLING === */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(135deg, #fbe9e7, #ffe0b2);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Floating Background Shapes */
+body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    z-index: 0;
+}
+body::before {
+    width: 400px; height: 400px;
+    background: #ff8a65;
+    top: -100px; left: -100px;
+}
+body::after {
+    width: 300px; height: 300px;
+    background: #f48fb1;
+    bottom: -80px; right: -80px;
+}
+
+/* === SIDEBAR === */
+.sidebar {
+    width: 230px;
+    background: #ff7043;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1rem;
+    box-shadow: 4px 0 12px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+.sidebar h1 {
+    font-size: 1.9rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+.sidebar button {
+    background: #fff;
+    color: #ff7043;
+    border: none;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.sidebar button:hover {
+    background: #f0f0f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* === MAIN CONTENT === */
+.main-content {
+    flex: 1;
+    padding: 2.5rem;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+}
+.main-content h1 {
+    color: #ff7043;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-shadow: 0 0 10px rgba(255,112,67,0.4);
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* === JOURNAL FORM === */
+form.journal-form {
+    background: rgba(255,255,255,0.9);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    max-width: 650px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+form.journal-form textarea {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    font-size: 1rem;
+    min-height: 130px;
+    resize: vertical;
+    font-family: 'Poppins', sans-serif;
+}
+form.journal-form textarea:focus {
+    outline: none;
+    border-color: #ff7043;
+    box-shadow: 0 0 8px rgba(255,112,67,0.5);
+}
+form.journal-form button {
+    background: #ff7043;
+    color: #fff;
+    padding: 0.75rem;
+    font-weight: 600;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+form.journal-form button:hover {
+    background: #ff8a65;
+}
+
+/* === JOURNAL ENTRIES === */
+ul.entries-list {
+    max-width: 650px;
+    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+ul.entries-list li {
+    background: rgba(255,255,255,0.9);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.entry-content {
+    font-style: italic;
+    color: #6b6b6b;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+.sentiment-tag {
+    border-radius: 12px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #fff;
+}
+.positive { background-color: #22c55e; }
+.neutral { background-color: #eab308; }
+.negative { background-color: #ef4444; }
+
+/* === CHART === */
+#sentimentChartContainer {
+    max-width: 650px;
+    margin: 2.5rem auto 0;
+    background: rgba(255,255,255,0.9);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* === AI RESPONSE BOX === */
+#ai-reply-box {
+    display: none;
+    margin: 2rem auto;
+    background: #1e1e1e;
+    color: #f0f0f0;
+    padding: 1.2rem;
+    border-radius: 12px;
+    max-width: 650px;
+    white-space: pre-line;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* === GO CHAT BUTTON === */
+.go-chat-btn {
+    display: block;
+    margin: 2.5rem auto 0;
+    background: #ff7043;
+    color: #fff;
+    padding: 0.85rem 1.6rem;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: 250px;
+    text-align: center;
+}
+.go-chat-btn:hover {
+    background: #ff8a65;
+}
+</style>
+</head>
+
+<body>
+<!-- === SIDEBAR === -->
+<div class="sidebar">
+    <h1>PsychoDoc</h1>
+    <button onclick="window.location.href='{% url 'psychodoc_dashboard' %}'">Chat with AI</button>
+    <button onclick="window.location.href='{% url 'psychodoc_journal' %}'">Journal Emotions</button>
+    <form action="{% url 'psychodoc_logout' %}" method="post" style="margin-top:auto;">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+</div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <h1>Your Journal</h1>
+
+    <!-- JOURNAL FORM -->
+    <form id="journal-form" class="journal-form" method="post">
+        {% csrf_token %}
+        <textarea name="content" id="journal-content" placeholder="Write your journal entry here..." required></textarea>
+        <button type="submit">Add Entry</button>
+        <button type="button" id="share-ai-btn">Share Your Journal with AI</button>
+    </form>
+
+    <!-- AI RESPONSE BOX -->
+    <div id="ai-reply-box"></div>
+
+    <!-- JOURNAL ENTRIES LIST -->
+    <ul class="entries-list" id="entries-list">
+        {% for entry in entries %}
+        <li data-entry="{{ entry.content|escapejs }}">
+            <div>
+                <time>{{ entry.date|date:"M d, Y - H:i" }}</time>
+                <div class="entry-content">{{ entry.content }}</div>
+            </div>
+            <div class="sentiment-tag {% if entry.sentiment == 'Positive' %}positive{% elif entry.sentiment == 'Neutral' %}neutral{% else %}negative{% endif %}">
+                {{ entry.sentiment }}
+            </div>
+        </li>
+        {% empty %}
+        <li>No entries yet. Write something to begin your journey ✍️</li>
+        {% endfor %}
+    </ul>
+
+    <!-- SENTIMENT CHART -->
+    <div id="sentimentChartContainer">
+        <canvas id="sentimentChart"></canvas>
+    </div>
+
+    <!-- GO CHAT BUTTON -->
+    <button class="go-chat-btn" onclick="window.location.href='{% url 'psychodoc_dashboard' %}'">
+        Go to AI Chat
+    </button>
+</div>
+
+<!-- === SCRIPTS === -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const shareBtn = document.getElementById('share-ai-btn');
+    const aiReplyBox = document.getElementById('ai-reply-box');
+    const entriesList = document.getElementById('entries-list');
+
+    shareBtn.addEventListener('click', async () => {
+        const pastEntries = [...entriesList.querySelectorAll('li[data-entry]')]
+            .map(li => li.dataset.entry);
+
+        if (pastEntries.length === 0) {
+            alert("Please write some journal entries first.");
+            return;
+        }
+
+        aiReplyBox.style.display = "block";
+        aiReplyBox.innerText = "🧠 PsychoDoc is analyzing your emotions and patterns...";
+
+        try {
+            const response = await fetch("{% url 'psychodoc_analyze_journal' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify({ entries: pastEntries }),
+            });
+
+            const data = await response.json();
+            if (data.analysis) {
+                aiReplyBox.innerText = data.analysis;
+            } else {
+                aiReplyBox.innerText = "Sorry, PsychoDoc couldn’t analyze right now.";
+            }
+        } catch (err) {
+            aiReplyBox.innerText = "⚠️ Error: " + err.message;
+        }
+    });
+});
+</script>
+
+<script>
+/* === SENTIMENT CHART === */
+const ctx = document.getElementById('sentimentChart').getContext('2d');
+const sentimentData = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+        label: 'Sentiment Distribution',
+        data: [{{ sentiments.Positive }}, {{ sentiments.Neutral }}, {{ sentiments.Negative }}],
+        backgroundColor: ['#22c55e', '#eab308', '#ef4444'],
+        borderRadius: 6
+    }]
+};
+new Chart(ctx, {
+    type: 'doughnut',
+    data: sentimentData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: '#ff7043' } },
+            title: {
+                display: true,
+                text: 'Your Journal Sentiment Summary',
+                color: '#ff7043',
+                font: { size: 18, weight: '700' }
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

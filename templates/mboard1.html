@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NonStopZone - Music Player</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+  <style>
+    :root { --primary-clr: rgba(228, 228, 229, 1); }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Nunito", sans-serif; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 20% 30%, #1f1c2c, #928dab);
+      overflow: hidden;
+      background-image: url("{% static 'bgextreme.jpg' %}");
+       background-repeat: no-repeat;
+        background-size: cover;
+         background-position: center; 
+         backdrop-filter: blur(8px);
+          animation: slidein 120s infinite alternate;
+    }
+
+    .album-cover { width: 90%; max-width: 900px; }
+    .swiper { width: 100%; padding: 40px 0 100px; }
+    .swiper-slide {
+      position: relative;
+      max-width: 220px;
+      aspect-ratio: 1/1;
+      border-radius: 12px;
+      transition: transform 0.4s ease;
+    }
+    .swiper-slide img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      -webkit-box-reflect: below -5px linear-gradient(transparent, transparent, rgba(0, 0, 0, 0.4));
+      pointer-events: none;
+      user-select: none;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+    .swiper-slide-active img { transform: scale(1.1); filter: brightness(1.1); }
+
+    .music-player {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--primary-clr);
+      width: 360px;
+      padding: 20px 30px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease-in-out;
+    }
+    .music-player img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease-in-out;
+    }
+    .music-player h1 { font-size: 1.5rem; font-weight: 600; text-align: center; }
+    .music-player p { font-size: 1rem; opacity: 0.7; text-align: center; margin-bottom: 10px; }
+
+    #progress {
+      appearance: none;
+      width: 100%;
+      height: 7px;
+      background: rgba(163, 162, 164, 0.3);
+      border-radius: 4px;
+      margin: 25px 0;
+      cursor: pointer;
+    }
+    #progress::-webkit-slider-thumb {
+      appearance: none;
+      background: #fff;
+      width: 15px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      outline: 4px solid var(--primary-clr);
+    }
+
+    .controls {
+      display: flex;
+      gap: 20px;
+    }
+    .controls button {
+      width: 50px;
+      aspect-ratio: 1/1;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      cursor: pointer;
+      transition: 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .controls button:hover { transform: scale(0.95); }
+    .controls img {
+      width: 25px;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5));
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Album Cover Slider -->
+  <div class="album-cover">
+    <div class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="/static/random1.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random2.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random3.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random4.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random5.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random6.jpg" alt=""></div>
+        <div class="swiper-slide"><img src="/static/random7.jpg" alt=""></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Music Player -->
+  <div class="music-player">
+    <img id="coverImage" src="/static/random1.jpg" alt="Cover Image" />
+    <h1 id="songTitle">Symphony</h1>
+    <p id="songArtist">Clean Bandit ft. Zara Larsson</p>
+    <audio id="song"></audio>
+    <input type="range" id="progress" value="0" />
+    <div class="controls">
+      <button class="backward"><img src="backplay.png" alt="Previous"></button>
+      <button class="play-pause-btn"><img id="controlIcon" src="playup.png" alt="Play"></button>
+      <button class="forward"><img src="nextplay.png" alt="Next"></button>
+    </div>
+  </div>
+
+  <!-- Swiper & Player Script -->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script>
+    const songs = [
+      { title: "Symphony", artist: "Clean Bandit ft. Zara Larsson", src: "symphony.mp3", cover: "random1.jpg" },
+      { title: "Pawn It All", artist: "Alicia Keys", src: "pawnitall.mp3", cover: "random2.jpg" },
+      { title: "Seni Dert Etmeler", artist: "Madrigal", src: "madrigal.mp3", cover: "random3.jpg" },
+      { title: "Instant Crush", artist: "Daft Punk ft. Julian Casablancas", src: "instantcrush.mp3", cover: "random4.jpg" },
+      { title: "As It Was", artist: "Harry Styles", src: "asitwas.mp3", cover: "random5.jpg" },
+      { title: "Physical", artist: "Dua Lipa", src: "physicaldualipa.mp3", cover: "random6.jpg" },
+      { title: "Delicate", artist: "Taylor Swift", src: "delicateswifty.mp3", cover: "random7.jpg" },
+    ];
+
+    const song = document.getElementById("song");
+    const progress = document.getElementById("progress");
+    const controlIcon = document.getElementById("controlIcon");
+    const playPauseButton = document.querySelector(".play-pause-btn");
+    const nextButton = document.querySelector(".forward");
+    const prevButton = document.querySelector(".backward");
+    const songTitle = document.getElementById("songTitle");
+    const songArtist = document.getElementById("songArtist");
+    const coverImage = document.getElementById("coverImage");
+
+    let currentSongIndex = 0;
+
+    function updatePlayer() {
+      const current = songs[currentSongIndex];
+      song.src = current.src;
+      songTitle.textContent = current.title;
+      songArtist.textContent = current.artist;
+      coverImage.src = current.cover;
+      song.load();
+      playSong();
+    }
+
+    function playSong() {
+      song.play();
+      controlIcon.src = "pauseup.png";
+    }
+
+    function pauseSong() {
+      song.pause();
+      controlIcon.src = "playup.png";
+    }
+
+    playPauseButton.addEventListener("click", () => {
+      if (song.paused) playSong();
+      else pauseSong();
+    });
+
+    song.addEventListener("timeupdate", () => {
+      progress.value = song.currentTime;
+    });
+
+    song.addEventListener("loadedmetadata", () => {
+      progress.max = song.duration;
+    });
+
+    progress.addEventListener("input", () => {
+      song.currentTime = progress.value;
+    });
+
+    nextButton.addEventListener("click", () => {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      swiper.slideTo(currentSongIndex);
+      updatePlayer();
+    });
+
+    prevButton.addEventListener("click", () => {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      swiper.slideTo(currentSongIndex);
+      updatePlayer();
+    });
+
+    const swiper = new Swiper(".swiper", {
+      effect: "coverflow",
+      centeredSlides: true,
+      slidesPerView: "auto",
+      grabCursor: true,
+      spaceBetween: 40,
+      initialSlide: 0,
+      coverflowEffect: {
+        rotate: 25,
+        depth: 70,
+        slideShadows: false,
+      },
+      on: {
+        slideChange: () => {
+          currentSongIndex = swiper.activeIndex;
+          updatePlayer();
+        },
+      },
+    });
+
+    updatePlayer();
+  </script>
+</body>
+</html>

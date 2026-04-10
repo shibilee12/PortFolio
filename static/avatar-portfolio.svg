@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360">
+  <defs>
+    <linearGradient id="bg" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#3c42fc"/>
+      <stop offset="55%" stop-color="#7b6bff"/>
+      <stop offset="100%" stop-color="#ab7df6"/>
+    </linearGradient>
+    <linearGradient id="collar" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7f6ff"/>
+      <stop offset="100%" stop-color="#d0c9ff"/>
+    </linearGradient>
+    <radialGradient id="face" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#fde3d8"/>
+      <stop offset="100%" stop-color="#f0c6b6"/>
+    </radialGradient>
+  </defs>
+  <circle cx="180" cy="180" r="170" fill="url(#bg)"/>
+  <g transform="translate(0,6)">
+    <path d="M180 300c-49 0-110 9-130 36 27 28 89 30 130 30s103-2 130-30c-20-27-81-36-130-36z" fill="#2a2c63" opacity="0.27"/>
+  </g>
+  <g transform="translate(60,60)">
+    <path d="M120 208c-34 0-66 6-88 18 9-40 44-68 88-68s79 28 88 68c-22-12-54-18-88-18z" fill="url(#collar)"/>
+    <path d="M120 92c38 0 68 30 68 68s-30 68-68 68-68-30-68-68 30-68 68-68z" fill="url(#face)"/>
+    <path d="M120 34c42 0 90 24 92 94l.18 6.5c-14-19-35-33-59-33-7 0-14 1-20 3 6-27-6-58-13-70z" fill="#2c2f66" opacity="0.85"/>
+    <path d="M72 102c14 7 22-8 41-8 19 0 27 15 42 8 15-7 17-38 8-58-9-20-30-32-50-32s-41 12-50 32c-9 20-7 51 9 58z" fill="#2f3274"/>
+    <path d="M88 146c0 9 8 16 18 16s18-7 18-16" stroke="#e8b9a8" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <circle cx="90" cy="136" r="9" fill="#1f2255"/>
+    <circle cx="150" cy="136" r="9" fill="#1f2255"/>
+    <path d="M112 182c10 6 28 6 38 0" stroke="#c37a6a" stroke-width="7" stroke-linecap="round" fill="none"/>
+  </g>
+  <text x="180" y="330" text-anchor="middle" font-family="'Space Grotesk', 'Inter', sans-serif" font-size="46" font-weight="700" fill="#f5f3ff">SM</text>
+</svg>
+
+
+
+
+
+
+
