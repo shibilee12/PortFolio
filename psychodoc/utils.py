@@ -35,16 +35,11 @@ def _load_model_background():
 
 def _load_model():
     """Get model, loading if necessary"""
-    global _tokenizer, _model, _loading
     with _lock:
         if _tokenizer is None or _model is None:
             if not _loading:
-                _load_model_sync()  # Load immediately if not already loading
-            else:
-                # Wait for background load to complete
-                while _tokenizer is None or _model is None:
-                    import time
-                    time.sleep(0.1)
+                _load_model_background()  # Load in background if not already loading
+            return None, None  # Return immediately while loading
     return _tokenizer, _model
 
 def analyze_sentiment(text):

@@ -26,7 +26,7 @@ def get_city_image(city):
         except:
             pass
     # fallback to unsplash random image URL
-    return f"https://source.unsplash.com/1600x900/?{city},city"
+    return "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1600&q=80"
 
 # Main view
 def weather_dashboard(request):
