@@ -82,6 +82,7 @@ h3 { font-size: 1.75rem; }
 .text-gradient {
     background: var(--gradient-main);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     display: inline-block;
 }
